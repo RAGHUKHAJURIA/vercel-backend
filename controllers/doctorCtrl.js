@@ -47,7 +47,7 @@ const updateProfileController = async (req, res) => {
 
 const getDoctorByIdController = async (req, res) => {
   try {
-    const doctor = await doctorModel.findOne({ _id: req.body.doctorId });
+    const doctor = await doctorModel.findOne({ _id: req.doctorId });
     res.status(200).send({
       success: true,
       message: "Sigle Doc Info Fetched",

@@ -7,7 +7,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "client": "npm run dev --prefix ../client",
-    "dev:fullstack": "concurrently \"npm run dev\" \"npm run client\"",
+    "dev:fullstack": "concurrently \"npm start\" \"npm run client\"",
     "build": "echo \"Building the project\""
   },
   "keywords": [],

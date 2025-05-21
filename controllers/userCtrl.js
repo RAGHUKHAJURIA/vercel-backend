@@ -69,35 +69,72 @@ const registeController = async (req, res) => {
 // }
 
 
+// const loginController = async (req, res) => {
+//     try {
+//         const user = await userModel.findOne({ email: req.body.email });
+//         if (!user) {
+//             return res.status(200).send({ message: `User not found`, success: false });
+//         }
+
+//         const isMatch = await bcrypt.compare(req.body.password, user.password);
+//         if (!isMatch) {
+//             return res.status(200).send({ message: `Invalid Email or Password`, success: false });
+//         }
+
+//         if (!process.env.JWT_SECRET) {
+//             throw new Error("JWT_SECRET not defined in environment");
+//         }
+
+//         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//             expiresIn: "1d",
+//         });
+
+//         res.status(200).send({ message: `Login Success`, success: true, token });
+//     } catch (error) {
+//         console.error("Login Error:", error.message);
+//         res.status(500).send({
+//             message: `Error in Login CTRL: ${error.message}`,
+//             success: false,
+//         });
+//     }
+// };
+
 const loginController = async (req, res) => {
-    try {
-        const user = await userModel.findOne({ email: req.body.email });
-        if (!user) {
-            return res.status(200).send({ message: `User not found`, success: false });
-        }
+  try {
+    const user = await userModel.findOne({ email: req.body.email });
 
-        const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if (!isMatch) {
-            return res.status(200).send({ message: `Invalid Email or Password`, success: false });
-        }
-
-        if (!process.env.JWT_SECRET) {
-            throw new Error("JWT_SECRET not defined in environment");
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "1d",
-        });
-
-        res.status(200).send({ message: `Login Success`, success: true, token });
-    } catch (error) {
-        console.error("Login Error:", error.message);
-        res.status(500).send({
-            message: `Error in Login CTRL: ${error.message}`,
-            success: false,
-        });
+    if (!user) {
+      return res.status(200).send({ message: `User not found`, success: false });
     }
+
+    if (!user.password) {
+      return res.status(500).send({ message: `User password is missing`, success: false });
+    }
+
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch) {
+      return res.status(200).send({ message: `Invalid Email or Password`, success: false });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("❌ JWT_SECRET not set in environment");
+      return res.status(500).send({ message: "Server config error", success: false });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).send({ message: `Login Success`, success: true, token });
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    res.status(500).send({
+      message: `Error in Login CTRL: ${error.message}`,
+      success: false,
+    });
+  }
 };
+
 
 
 const authController = async (req, res) => {

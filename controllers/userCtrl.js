@@ -46,13 +46,34 @@ const registeController = async (req, res) => {
 //     }
 // }
 
+// const loginController = async (req, res) => {
+//     try {
+//         console.log("JWT_SECRET:", process.env.JWT_SECRET); // ✅ Add this log
+//         const user = await userModel.findOne({ email: req.body.email });
+
+//         if (!user) {
+//             return res.status(200).send({ message: `user not found`, success: false });
+//         }
+
+//         const isMatch = await bcrypt.compare(req.body.password, user.password);
+//         if (!isMatch) {
+//             return res.status(200).send({ message: `Invalid Email or Password`, success: false });
+//         }
+
+//         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+//         res.status(200).send({ message: `Login Success`, success: true, token });
+//     } catch (error) {
+//         console.log("Login Error:", error.message); // ✅ Add this log
+//         res.status(500).send({ message: `Error in Login CTRL ${error.message}` });
+//     }
+// }
+
+
 const loginController = async (req, res) => {
     try {
-        console.log("JWT_SECRET:", process.env.JWT_SECRET); // ✅ Add this log
         const user = await userModel.findOne({ email: req.body.email });
-
         if (!user) {
-            return res.status(200).send({ message: `user not found`, success: false });
+            return res.status(200).send({ message: `User not found`, success: false });
         }
 
         const isMatch = await bcrypt.compare(req.body.password, user.password);
@@ -60,13 +81,23 @@ const loginController = async (req, res) => {
             return res.status(200).send({ message: `Invalid Email or Password`, success: false });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET not defined in environment");
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1d",
+        });
+
         res.status(200).send({ message: `Login Success`, success: true, token });
     } catch (error) {
-        console.log("Login Error:", error.message); // ✅ Add this log
-        res.status(500).send({ message: `Error in Login CTRL ${error.message}` });
+        console.error("Login Error:", error.message);
+        res.status(500).send({
+            message: `Error in Login CTRL: ${error.message}`,
+            success: false,
+        });
     }
-}
+};
 
 
 const authController = async (req, res) => {

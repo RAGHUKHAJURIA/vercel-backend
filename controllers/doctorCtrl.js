@@ -45,12 +45,30 @@ const updateProfileController = async (req, res) => {
 };
 
 
+// const getDoctorByIdController = async (req, res) => {
+//   try {
+//     const doctor = await doctorModel.findOne({ _id: req.doctorId });
+//     res.status(200).send({
+//       success: true,
+//       message: "Sigle Doc Info Fetched",
+//       data: doctor,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({
+//       success: false,
+//       error,
+//       message: "Erro in Single docot info",
+//     });
+//   }
+// };
+
 const getDoctorByIdController = async (req, res) => {
   try {
-    const doctor = await doctorModel.findOne({ _id: req.doctorId });
+    const doctor = await doctorModel.findOne({ _id: req.body.doctorId });
     res.status(200).send({
       success: true,
-      message: "Sigle Doc Info Fetched",
+      message: "Single Doc Info Fetched",
       data: doctor,
     });
   } catch (error) {
@@ -58,10 +76,11 @@ const getDoctorByIdController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Erro in Single docot info",
+      message: "Error in Single doctor info",
     });
   }
 };
+
 
 // doctor appointments
 const doctorAppointmentsController = async (req, res) => {
